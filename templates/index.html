@@ -1,15 +1,11 @@
-<!-- templates/index.html -->
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>BowlPlus - Inicio</title>
-</head>
-<body>
-    <h1>¡Bienvenido a BowlPlus! 🎳</h1>
+{% extends "layout.html" %}
+
+{% block title %}Inicio - PlenoService{% endblock %}
+
+{% block content %}
+    <h1>¡Bienvenido a PlenoService! 🎳</h1>
     <p>Pide tu comida y bebida a pista directamente!!</p>
     <button onclick="location.href='/cliente'">Soy Cliente</button>
     <button onclick="location.href='/administrador'">Soy Administrador</button>
 
-</body>
-</html>
+{% endblock %}
