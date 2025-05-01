@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, request, url_for, flash
 from flask_login import login_user, logout_user, login_required
 import sirope
-from models.usuario import Usuario
+from models.user import Usuario
 
 auth_bp = Blueprint("auth", __name__)
 srp = sirope.Sirope()
