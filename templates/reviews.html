@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+
+{% block title %}Reseñas - LibroTeca{% endblock %}
+
+{% block content %}
+<h2>Reseñas</h2>
+<p>Bienvenido a la página de reseñas.</p>
+
+<div class="buttons">
+    <button onclick="location.href='/books'" class="btn btn-primary">Libros</button>
+    <button onclick="location.href='/my-reviews'" class="btn btn-secondary">Mis Reseñas</button>
+    <button onclick="location.href='/my-books'" class="btn btn-success">Mis Libros</button>
+</div>
+{% endblock %}
