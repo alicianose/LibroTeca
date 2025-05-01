@@ -2,7 +2,13 @@ import uuid
 from flask import Blueprint, render_template, redirect, request, url_for, flash
 from flask_login import login_user, logout_user, login_required
 import sirope
+from flask_login import current_user
 from models.user import User
+from models.book import Book
+from models.review import Review
+
+from datetime import datetime
+
 
 auth_bp = Blueprint("auth", __name__)
 srp = sirope.Sirope()
@@ -47,12 +53,62 @@ def register():
 @auth_bp.route("/debug/users", methods=["GET"])
 def debug_users():
     users = list(srp.load_all(User))  # Cargar todos los usuarios desde la base de datos
-    return render_template("debug_users.html", users=users)
+    books = list(srp.load_all(Book))
+    return render_template("debug_users.html", users=users, books=books)
 
 @auth_bp.route("/reviews", methods=["GET"])
 @login_required
 def reviews():
-    return render_template("reviews.html")
+    reviews = sorted(srp.load_all(Review), key=lambda r: r.timestamp, reverse=True)
+    users = {user.id: user.username for user in srp.load_all(User)}
+    books = {book.id : book.title for book in srp.load_all(Book)}
+    return render_template("reviews.html", reviews=reviews, users=users, books=books)
+
+@auth_bp.route("/addbook", methods=["GET", "POST"])
+@login_required
+def add_book():
+    if request.method == "POST":
+        # Procesar los datos del formulario
+        isbn = request.form.get("isbn")
+        title = request.form.get("title")
+        author = request.form.get("author")
+        descr = request.form.get("descr")
+        cover = request.form.get("cover")
+        genre = request.form.get("genre")
+        addedby = request.form.get("addedby")
+
+        # Crear un nuevo libro y guardarlo en la base de datos
+        new_book = Book(str(uuid.uuid4()), isbn, title, author, descr, cover, genre, addedby)
+        srp.save(new_book)
+        flash("Libro añadido exitosamente.", "success")
+        return redirect(url_for("auth.reviews"))
+
+    return render_template("add_book.html")
+
+@auth_bp.route("/books", methods=["GET"])
+@login_required
+def books():
+    # Cargar todos los libros desde la base de datos
+    books = list(srp.load_all(Book))
+    return render_template("books.html", books=books)
+
+@auth_bp.route("/addreview", methods=["GET", "POST"])
+@login_required
+def add_review():
+    book_id = request.args.get("book_id")
+    if request.method == "POST":
+        # Procesar los datos del formulario de reseña
+        score = request.form.get("score")
+        coment = request.form.get("coment")
+        user_id = current_user.id
+       
+        # Crear una nueva reseña y guardarla en la base de datos
+        new_review = Review(str(uuid.uuid4()), user_id, book_id, score, coment, datetime.now())
+        srp.save(new_review)
+        flash("Reseña añadida exitosamente.", "success")
+        return redirect(url_for("auth.books"))
+
+    return render_template("add_review.html", book_id=book_id)
 
 @auth_bp.route("/logout")
 @login_required

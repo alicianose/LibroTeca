@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+
+{% block title %}Añadir Libro - LibroTeca{% endblock %}
+
+{% block content %}
+<h2>Añadir Libro</h2>
+<form method="POST" action="/addbook">
+    <div class="mb-3">
+        <label for="isbn" class="form-label">ISBN</label>
+        <input type="text" class="form-control" id="isbn" name="isbn" required>
+    </div>
+    <div class="mb-3">
+        <label for="title" class="form-label">Título</label>
+        <input type="text" class="form-control" id="title" name="title" required>
+    </div>
+    <div class="mb-3">
+        <label for="author" class="form-label">Autor</label>
+        <input type="text" class="form-control" id="author" name="author" required>
+    </div>
+    <div class="mb-3">
+        <label for="descr" class="form-label">Descripción</label>
+        <textarea class="form-control" id="descr" name="descr" rows="3" required></textarea>
+    </div>
+    <div class="mb-3">
+        <label for="cover" class="form-label">URL de la Portada</label>
+        <input type="url" class="form-control" id="cover" name="cover">
+    </div>
+    <div class="mb-3">
+        <label for="genre" class="form-label">Género</label>
+        <input type="text" class="form-control" id="genre" name="genre" required>
+    </div>
+    <div class="mb-3">
+        <label for="addedby" class="form-label">Añadido por</label>
+        <input type="text" class="form-control" id="addedby" name="addedby" value="{{ current_user.username }}" readonly>
+    </div>
+    <button type="submit" class="btn btn-primary">Añadir Libro</button>
+</form>
+{% endblock %}

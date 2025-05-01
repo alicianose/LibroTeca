@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+
+{% block title %}Añadir Reseña - LibroTeca{% endblock %}
+
+{% block content %}
+<h2>Añadir Reseña</h2>
+<form method="POST" action="/addreview?book_id={{ book_id }}">
+    <div class="mb-3">
+        <label for="score" class="form-label">Puntuación</label>
+        <input type="number" class="form-control" id="score" name="score" min="1" max="5" required>
+    </div>
+    <div class="mb-3">
+        <label for="coment" class="form-label">Comentario</label>
+        <textarea class="form-control" id="coment" name="coment" rows="3" required></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Añadir Reseña</button>
+</form>
+{% endblock %}

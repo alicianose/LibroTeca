@@ -1,4 +1,4 @@
-class book:
+class Book:
      def __init__(self, id, isbn, title, author, descr, cover, genre, addedby):
         self.id = id
         self.isbn = isbn

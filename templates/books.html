@@ -1,31 +1,9 @@
 {% extends "layout.html" %}
 
-{% block title %}Usuarios y Libros Registrados{% endblock %}
+{% block title %}Libros - LibroTeca{% endblock %}
 
 {% block content %}
-<h2>Usuarios Registrados</h2>
-<table class="table">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Nombre</th>
-            <th>Usuario</th>
-            <th>Email</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for user in users %}
-        <tr>
-            <td>{{ user.id }}</td>
-            <td>{{ user.name }}</td>
-            <td>{{ user.username }}</td>
-            <td>{{ user.email }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
-<h2>Libros Registrados</h2>
+<h2>Libros Disponibles</h2>
 <table class="table">
     <thead>
         <tr>
@@ -36,6 +14,7 @@
             <th>Descripción</th>
             <th>Género</th>
             <th>Añadido por</th>
+            <th>Acciones</th>
         </tr>
     </thead>
     <tbody>
@@ -48,6 +27,9 @@
             <td>{{ book.descr }}</td>
             <td>{{ book.genre }}</td>
             <td>{{ book.addedby }}</td>
+            <td>
+                <button onclick="location.href='/addreview?book_id={{ book.id }}'" class="btn btn-primary">Añadir Reseña</button>
+            </td>
         </tr>
         {% endfor %}
     </tbody>
