@@ -162,6 +162,28 @@ def like_review():
 
     return redirect(url_for("auth.reviews"))
 
+@auth_bp.route("/mybooks", methods=["GET"])
+@login_required
+def my_books():
+    # Filtrar los libros añadidos por el usuario actual
+    user_books = [book for book in srp.load_all(Book) if book.addedby == current_user.username]
+    return render_template("my_books.html", books=user_books)
+
+@auth_bp.route("/myreviews", methods=["GET"])
+@login_required
+def my_reviews():
+    # Filtrar las reseñas creadas por el usuario actual
+    user_reviews = [review for review in srp.load_all(Review) if review.user_id == current_user.id]
+
+    # Filtrar los comentarios hechos por el usuario actual
+    user_comments = [coment for coment in srp.load_all(Coment) if coment.user_id == current_user.id]
+
+    # Cargar los datos necesarios para mostrar las reseñas y comentarios
+    users = {user.id: user.username for user in srp.load_all(User)}
+    books = {book.id: book.title for book in srp.load_all(Book)}
+
+    return render_template("my_reviews.html", reviews=user_reviews, comments=user_comments, users=users, books=books)
+
 @auth_bp.route("/logout")
 @login_required
 def logout():

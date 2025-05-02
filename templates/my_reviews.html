@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+
+{% block title %}Mis Reseñas - LibroTeca{% endblock %}
+
+{% block content %}
+<h2>Mis Reseñas</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Libro</th>
+            <th>Puntuación</th>
+            <th>Comentario</th>
+            <th>Fecha</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for review in reviews %}
+        <tr>
+            <td>{{ books[review.book_id] }}</td>
+            <td>{{ review.score }}</td>
+            <td>{{ review.coment }}</td>
+            <td>{{ review.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h2>Mis Comentarios</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Reseña</th>
+            <th>Comentario</th>
+            <th>Fecha</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for coment in comments %}
+        <tr>
+            <td>{{ books[coment.review_id] if coment.review_id in books else 'Reseña desconocida' }}</td>
+            <td>{{ coment.text }}</td>
+            <td>{{ coment.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

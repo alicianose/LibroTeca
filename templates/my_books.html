@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+
+{% block title %}Mis Libros - LibroTeca{% endblock %}
+
+{% block content %}
+<h2>Mis Libros</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>ISBN</th>
+            <th>Título</th>
+            <th>Autor</th>
+            <th>Descripción</th>
+            <th>Género</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for book in books %}
+        <tr>
+            <td>{{ book.id }}</td>
+            <td>{{ book.isbn }}</td>
+            <td>{{ book.title }}</td>
+            <td>{{ book.author }}</td>
+            <td>{{ book.descr }}</td>
+            <td>{{ book.genre }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
