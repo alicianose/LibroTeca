@@ -1,8 +1,8 @@
-class coment:
-    def __init__(self, id, user_id, review_id, text, date, hour):
+from datetime import datetime  # Importar la clase datetime directamente
+class Coment:
+    def __init__(self, id, user_id, review_id, text, timestamp=None):
         self.id = id
         self.user_id = user_id
         self.review_id = review_id
         self.text = text
-        self.date = date
-        self.hour = hour
+        self.timestamp = timestamp or datetime.now()  

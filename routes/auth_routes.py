@@ -6,7 +6,8 @@ from flask_login import current_user
 from models.user import User
 from models.book import Book
 from models.review import Review
-
+from models.likereview import LikeReview
+from models.coment import Coment
 from datetime import datetime
 
 
@@ -56,14 +57,44 @@ def debug_users():
     books = list(srp.load_all(Book))
     return render_template("debug_users.html", users=users, books=books)
 
-@auth_bp.route("/reviews", methods=["GET"])
+@auth_bp.route("/reviews", methods=["GET", "POST"])
 @login_required
 def reviews():
+    if request.method == "POST":
+        # Procesar el comentario
+        review_id = request.form.get("review_id")
+        text = request.form.get("text")
+        user_id = current_user.id
+
+        # Crear un nuevo comentario y guardarlo en la base de datos
+        new_coment = Coment(str(uuid.uuid4()), user_id, review_id, text)
+        srp.save(new_coment)
+        flash("Comentario añadido exitosamente.", "success")
+        return redirect(url_for("auth.reviews"))
+
+    # GET: Renderizar la página de reseñas
     reviews = sorted(srp.load_all(Review), key=lambda r: r.timestamp, reverse=True)
     users = {user.id: user.username for user in srp.load_all(User)}
-    books = {book.id : book.title for book in srp.load_all(Book)}
-    return render_template("reviews.html", reviews=reviews, users=users, books=books)
+    books = {book.id: book.title for book in srp.load_all(Book)}
+    likes = {}
+    user_likes = set()
+    for like in srp.load_all(LikeReview):
+        if like.review_id in likes:
+            likes[like.review_id] += 1
+        else:
+            likes[like.review_id] = 1
 
+        if like.user_id == current_user.id:
+            user_likes.add(like.review_id)
+
+    # Cargar los comentarios
+    comments = {}
+    for coment in srp.load_all(Coment):
+        if coment.review_id not in comments:
+            comments[coment.review_id] = []
+        comments[coment.review_id].append(coment)
+
+    return render_template("reviews.html", reviews=reviews, users=users, books=books, likes=likes, user_likes=user_likes, comments=comments)
 @auth_bp.route("/addbook", methods=["GET", "POST"])
 @login_required
 def add_book():
@@ -109,6 +140,27 @@ def add_review():
         return redirect(url_for("auth.books"))
 
     return render_template("add_review.html", book_id=book_id)
+
+@auth_bp.route("/like_review", methods=["POST"])
+@login_required
+def like_review():
+    review_id = request.form.get("review_id")
+    user_id = current_user.id
+
+    # Verificar si el usuario ya dio like a esta reseña
+    existing_like = srp.find_first(LikeReview, lambda l: l.user_id == user_id and l.review_id == review_id)
+    if existing_like:
+          # Si ya existe el like, eliminarlo
+        srp.delete(existing_like)  # Eliminar el like existente
+        flash("Like eliminado.", "info")
+
+    else:
+        # Crear un nuevo like y guardarlo en la base de datos
+        new_like = LikeReview(str(uuid.uuid4()), user_id, review_id)
+        srp.save(new_like)
+        flash("Like añadido exitosamente.", "success")
+
+    return redirect(url_for("auth.reviews"))
 
 @auth_bp.route("/logout")
 @login_required

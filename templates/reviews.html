@@ -22,6 +22,7 @@
             <th>Puntuación</th>
             <th>Comentario</th>
             <th>Fecha</th>
+            <th>Likes</th>
         </tr>
     </thead>
     <tbody>
@@ -32,8 +33,61 @@
             <td>{{ review.score }}</td>
             <td>{{ review.coment }}</td>
             <td>{{ review.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+            <td>
+                <button 
+                    class="btn btn-sm {% if review.id in user_likes %}btn-danger{% else %}btn-outline-primary{% endif %}" 
+                    onclick="toggleLike('{{ review.id }}', this)">
+                    ❤️
+                </button>
+                <span id="like-count-{{ review.id }}">{{ likes[review.id] if review.id in likes else 0 }}</span>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="6">
+                <h5>Comentarios:</h5>
+                <ul>
+                    {% for coment in comments[review.id] if review.id in comments %}
+                    <li><strong>{{ users[coment.user_id] }}</strong>: {{ coment.text }} ({{ coment.timestamp.strftime('%Y-%m-%d %H:%M:%S') }})</li>
+                    {% endfor %}
+                </ul>
+                <form method="POST" action="/reviews">
+                    <input type="hidden" name="review_id" value="{{ review.id }}">
+                    <div class="mb-3">
+                        <textarea class="form-control" name="text" rows="2" placeholder="Añadir un comentario..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-sm">Comentar</button>
+                </form>
+            </td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
 {% endblock %}
+
+<script>
+    function toggleLike(reviewId, button) {
+        fetch('/reviews', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                'review_id': reviewId
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            const likeCount = document.getElementById(`like-count-${reviewId}`);
+            if (data.status === 'added') {
+                button.classList.remove('btn-outline-primary');
+                button.classList.add('btn-danger');
+                likeCount.textContent = parseInt(likeCount.textContent) + 1;
+            } else if (data.status === 'removed') {
+                button.classList.remove('btn-danger');
+                button.classList.add('btn-outline-primary');
+                likeCount.textContent = parseInt(likeCount.textContent) - 1;
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+</script>
