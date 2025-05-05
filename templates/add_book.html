@@ -4,7 +4,7 @@
 
 {% block content %}
 <h2>Añadir Libro</h2>
-<form method="POST" action="/addbook">
+<form method="POST" action="/addbook" enctype="multipart/form-data">
     <div class="mb-3">
         <label for="isbn" class="form-label">ISBN</label>
         <input type="text" class="form-control" id="isbn" name="isbn" required>
@@ -22,8 +22,8 @@
         <textarea class="form-control" id="descr" name="descr" rows="3" required></textarea>
     </div>
     <div class="mb-3">
-        <label for="cover" class="form-label">URL de la Portada</label>
-        <input type="url" class="form-control" id="cover" name="cover">
+        <label for="cover" class="form-label">Portada</label>
+        <input type="file" class="form-control" id="cover" name="cover" accept="image/*" required>
     </div>
     <div class="mb-3">
         <label for="genre" class="form-label">Género</label>

@@ -4,34 +4,25 @@
 
 {% block content %}
 <h2>Libros Disponibles</h2>
-<table class="table">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>ISBN</th>
-            <th>Título</th>
-            <th>Autor</th>
-            <th>Descripción</th>
-            <th>Género</th>
-            <th>Añadido por</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for book in books %}
-        <tr>
-            <td>{{ book.id }}</td>
-            <td>{{ book.isbn }}</td>
-            <td>{{ book.title }}</td>
-            <td>{{ book.author }}</td>
-            <td>{{ book.descr }}</td>
-            <td>{{ book.genre }}</td>
-            <td>{{ book.addedby }}</td>
-            <td>
-                <button onclick="location.href='/addreview?book_id={{ book.id }}'" class="btn btn-primary">Añadir Reseña</button>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="book-grid">
+    {% for book in books %}
+    <div class="book-card">
+        {% if book.cover %}
+        <img src="{{ url_for('static', filename='uploads/' ~ book.cover) }}" alt="Portada" class="book-cover">
+        {% else %}
+        <div class="no-cover">Sin portada</div>
+        {% endif %}
+        <h3 class="book-title">{{ book.title }}</h3>
+        <p class="book-author">Por {{ book.author }}</p>
+        <div class="book-actions">
+            <button onclick="location.href='/addreview?book_id={{ book.id }}'" class="btn btn-primary btn-sm">Añadir Reseña</button>
+            <select name="state" class="form-select form-select-sm" onchange="updateBookState('{{ book.id }}', this.value)">
+                <option value="Pendiente" {% if book.state == 'Pendiente' %}selected{% endif %}>Pendiente</option>
+                <option value="Leyendo" {% if book.state == 'Leyendo' %}selected{% endif %}>Leyendo</option>
+                <option value="Leído" {% if book.state == 'Leído' %}selected{% endif %}>Leído</option>
+            </select>
+        </div>
+    </div>
+    {% endfor %}
+</div>
 {% endblock %}

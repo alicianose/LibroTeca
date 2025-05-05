@@ -1,5 +1,7 @@
 import uuid
-from flask import Blueprint, render_template, redirect, request, url_for, flash
+from werkzeug.utils import secure_filename
+import os
+from flask import Blueprint, render_template, redirect, request, url_for, flash, current_app
 from flask_login import login_user, logout_user, login_required
 import sirope
 from flask_login import current_user
@@ -8,6 +10,7 @@ from models.book import Book
 from models.review import Review
 from models.likereview import LikeReview
 from models.coment import Coment
+from models.userbook import UserBook
 from datetime import datetime
 
 
@@ -104,12 +107,17 @@ def add_book():
         title = request.form.get("title")
         author = request.form.get("author")
         descr = request.form.get("descr")
-        cover = request.form.get("cover")
         genre = request.form.get("genre")
-        addedby = request.form.get("addedby")
+        # Manejar la subida de la portada
+        cover = request.files["cover"]
+        if cover:
+            filename = secure_filename(cover.filename)
+            cover.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
+        else:
+            filename = None
 
         # Crear un nuevo libro y guardarlo en la base de datos
-        new_book = Book(str(uuid.uuid4()), isbn, title, author, descr, cover, genre, addedby)
+        new_book = Book(str(uuid.uuid4()), isbn, title, author, descr, filename, genre, current_user.username)
         srp.save(new_book)
         flash("Libro añadido exitosamente.", "success")
         return redirect(url_for("auth.reviews"))
