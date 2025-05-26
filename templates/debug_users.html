@@ -30,7 +30,6 @@
     <thead>
         <tr>
             <th>ID</th>
-            <th>ISBN</th>
             <th>Título</th>
             <th>Autor</th>
             <th>Descripción</th>
@@ -42,7 +41,6 @@
         {% for book in books %}
         <tr>
             <td>{{ book.id }}</td>
-            <td>{{ book.isbn }}</td>
             <td>{{ book.title }}</td>
             <td>{{ book.author }}</td>
             <td>{{ book.descr }}</td>

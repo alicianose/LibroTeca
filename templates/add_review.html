@@ -6,9 +6,15 @@
 <h2>Añadir Reseña</h2>
 <form method="POST" action="/addreview?book_id={{ book_id }}">
     <div class="mb-3">
-        <label for="score" class="form-label">Puntuación</label>
-        <input type="number" class="form-control" id="score" name="score" min="1" max="5" required>
+    <label class="form-label">Puntuación</label>
+    <div class="star-rating">
+        <input type="radio" id="star5" name="score" value="5" required><label for="star5" title="5 estrellas">&#9733;</label>
+        <input type="radio" id="star4" name="score" value="4"><label for="star4" title="4 estrellas">&#9733;</label>
+        <input type="radio" id="star3" name="score" value="3"><label for="star3" title="3 estrellas">&#9733;</label>
+        <input type="radio" id="star2" name="score" value="2"><label for="star2" title="2 estrellas">&#9733;</label>
+        <input type="radio" id="star1" name="score" value="1"><label for="star1" title="1 estrella">&#9733;</label>
     </div>
+</div>
     <div class="mb-3">
         <label for="coment" class="form-label">Comentario</label>
         <textarea class="form-control" id="coment" name="coment" rows="3" required></textarea>

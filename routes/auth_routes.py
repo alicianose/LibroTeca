@@ -103,7 +103,6 @@ def reviews():
 def add_book():
     if request.method == "POST":
         # Procesar los datos del formulario
-        isbn = request.form.get("isbn")
         title = request.form.get("title")
         author = request.form.get("author")
         descr = request.form.get("descr")
@@ -114,15 +113,25 @@ def add_book():
             filename = secure_filename(cover.filename)
             cover.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
         else:
-            filename = None
+            filename = "Nodisponible.jpg"
 
         # Crear un nuevo libro y guardarlo en la base de datos
-        new_book = Book(str(uuid.uuid4()), isbn, title, author, descr, filename, genre, current_user.username)
+        new_book = Book(str(uuid.uuid4()), title, author, descr, filename, genre, current_user.username)
         srp.save(new_book)
         flash("Libro añadido exitosamente.", "success")
         return redirect(url_for("auth.reviews"))
 
     return render_template("add_book.html")
+
+@auth_bp.route("/delete_book/<book_id>", methods=["POST"])
+@login_required
+def delete_book(book_id):
+    for key in srp.load_all_keys(Book):
+        book = srp.load(key)
+        if book and book.id==book_id:
+            srp.delete(key)
+            break
+    return redirect(url_for('auth.my_books'))
 
 @auth_bp.route("/books", methods=["GET"])
 @login_required
@@ -170,12 +179,13 @@ def like_review():
 
     return redirect(url_for("auth.reviews"))
 
-@auth_bp.route("/mybooks", methods=["GET"])
+@auth_bp.route("/mybooks")
 @login_required
 def my_books():
-    # Filtrar los libros añadidos por el usuario actual
-    user_books = [book for book in srp.load_all(Book) if book.addedby == current_user.username]
-    return render_template("my_books.html", books=user_books)
+    books = srp.load_all(Book)
+    my_books = [b for b in books if b.addedby == current_user.username]
+    return render_template("my_books.html", books=my_books)
+
 
 @auth_bp.route("/myreviews", methods=["GET"])
 @login_required

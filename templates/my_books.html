@@ -4,28 +4,31 @@
 
 {% block content %}
 <h2>Mis Libros</h2>
-<table class="table">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>ISBN</th>
-            <th>Título</th>
-            <th>Autor</th>
-            <th>Descripción</th>
-            <th>Género</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for book in books %}
-        <tr>
-            <td>{{ book.id }}</td>
-            <td>{{ book.isbn }}</td>
-            <td>{{ book.title }}</td>
-            <td>{{ book.author }}</td>
-            <td>{{ book.descr }}</td>
-            <td>{{ book.genre }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="book-grid">
+    {% for book in books %}
+    <div class="book-card">
+        {% if book.cover %}
+        <div class="cover-hover">
+            <img src="{{ url_for('static', filename='uploads/' ~ book.cover) }}" alt="Portada" class="book-cover">
+            <div class="cover-sinopsis">
+                {{ book.descr }}
+            </div>
+        </div>
+        {% else %}
+        <div class="cover-hover">
+            <img src="{{ url_for('static', filename='uploads/Nodisponible.jpg') }}" alt="Sin portada disponible" class="book-cover">
+            <div class="cover-sinopsis">
+                {{ book.descr }}
+            </div>
+        </div>
+        {% endif %}
+        <h3 class="book-title">{{ book.title }}</h3>
+        <p class="book-author">Por {{ book.author }}</p>
+        <p class="book-genre">{{ book.genre }}</p>
+        <form method="POST" action="{{ url_for('auth.delete_book', book_id=book.id) }}" style="margin-top:10px;">
+            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Seguro que quieres eliminar este libro?');">Eliminar</button>
+        </form>
+    </div>
+    {% endfor %}
+</div>
 {% endblock %}

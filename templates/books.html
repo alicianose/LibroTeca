@@ -8,10 +8,20 @@
     {% for book in books %}
     <div class="book-card">
         {% if book.cover %}
-        <img src="{{ url_for('static', filename='uploads/' ~ book.cover) }}" alt="Portada" class="book-cover">
-        {% else %}
-        <div class="no-cover">Sin portada</div>
-        {% endif %}
+    <div class="cover-hover">
+    <img src="{{ url_for('static', filename='uploads/' ~ book.cover) }}" alt="Portada" class="book-cover">
+    <div class="cover-sinopsis">
+        {{ book.descr }}
+    </div>
+</div>
+{% else %}
+    <div class="cover-hover">
+    <img src="{{ url_for('static', filename='uploads/Nodisponible.jpg') }}" alt="Sin portada disponible" class="book-cover">
+    <div class="cover-sinopsis">
+        {{ book.descr }}
+    </div>
+</div>
+{% endif %}
         <h3 class="book-title">{{ book.title }}</h3>
         <p class="book-author">Por {{ book.author }}</p>
         <div class="book-actions">

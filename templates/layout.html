@@ -23,9 +23,12 @@
     <div id="sidebar" class="sidebar">
         <a href="javascript:void(0)" class="closebtn" onclick="closeSidebar()">&times;</a>
         <a href="/books">Libros</a>
+        <a href="/reviews">Reseñas</a>
+        <a href="/lists">Mis listas</a>
         <a href="/myreviews">Mis Reseñas</a>
         <a href="/mybooks">Mis Libros</a>
         <a href="/addbook">Añadir Libro</a>
+
     </div>
 
 <div class="container">
@@ -36,6 +39,14 @@
 </div>
 
 </body>
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
 </html>
 
 <script>
