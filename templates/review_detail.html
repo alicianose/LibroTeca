@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+{% block title %}Detalle de Reseña{% endblock %}
+{% block content %}
+<div class="review-card">
+    <div class="review-header">
+        <span class="review-user">{{ users[review.user_id] }}</span>
+        <span class="review-book">{{ books[review.book_id] }}</span>
+        <span class="review-score">
+            {% for i in range(1, 6) %}
+                {% if i <= review.score|int %}
+                    <span class="star">&#9733;</span>
+                {% else %}
+                    <span class="star star-empty">&#9733;</span>
+                {% endif %}
+            {% endfor %}
+        </span>
+    </div>
+    <div class="review-body">
+        <p>{{ review.coment }}</p>
+    </div>
+    <div class="review-comments">
+        <h5>Todos los comentarios:</h5>
+        <ul>
+            {% for coment in comments %}
+                <li><strong>{{ users[coment.user_id] }}</strong>: {{ coment.text }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <a href="{{ url_for('auth.reviews') }}" class="btn btn-secondary btn-sm">Volver</a>
+</div>
+{% endblock %}

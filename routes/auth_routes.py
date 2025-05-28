@@ -1,7 +1,7 @@
 import uuid
 from werkzeug.utils import secure_filename
 import os
-from flask import Blueprint, render_template, redirect, request, url_for, flash, current_app
+from flask import Blueprint, jsonify, render_template, redirect, request, url_for, flash, current_app
 from flask_login import login_user, logout_user, login_required
 import sirope
 from flask_login import current_user
@@ -98,6 +98,18 @@ def reviews():
         comments[coment.review_id].append(coment)
 
     return render_template("reviews.html", reviews=reviews, users=users, books=books, likes=likes, user_likes=user_likes, comments=comments)
+@auth_bp.route("/review/<review_id>")
+@login_required
+def review_detail(review_id):
+    review = srp.find_first(Review, lambda r: r.id == review_id)
+    if not review:
+        flash("Reseña no encontrada.", "danger")
+        return redirect(url_for("auth.reviews"))
+    users = {user.id: user.username for user in srp.load_all(User)}
+    books = {book.id: book.title for book in srp.load_all(Book)}
+    all_comments = [c for c in srp.load_all(Coment) if c.review_id == review_id]
+    return render_template("review_detail.html", review=review, users=users, books=books, comments=all_comments)
+
 @auth_bp.route("/addbook", methods=["GET", "POST"])
 @login_required
 def add_book():
@@ -167,18 +179,17 @@ def like_review():
     # Verificar si el usuario ya dio like a esta reseña
     existing_like = srp.find_first(LikeReview, lambda l: l.user_id == user_id and l.review_id == review_id)
     if existing_like:
-          # Si ya existe el like, eliminarlo
-        srp.delete(existing_like)  # Eliminar el like existente
-        flash("Like eliminado.", "info")
-
+        # Buscar el like recorriendo todas las claves, igual que en delete_book
+        for key in srp.load_all_keys(LikeReview):
+            like = srp.load(key)
+            if like and like.user_id == user_id and like.review_id == review_id:
+                srp.delete(key)
+                return jsonify({"status": "removed"})
     else:
         # Crear un nuevo like y guardarlo en la base de datos
         new_like = LikeReview(str(uuid.uuid4()), user_id, review_id)
         srp.save(new_like)
-        flash("Like añadido exitosamente.", "success")
-
-    return redirect(url_for("auth.reviews"))
-
+        return jsonify({"status": "added"}) 
 @auth_bp.route("/mybooks")
 @login_required
 def my_books():
