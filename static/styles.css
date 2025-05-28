@@ -21,6 +21,11 @@ button, .btn-primary {
 button:hover {
     background-color: #333; /* Cambia el color de fondo al pasar el mouse */
 }
+.container, .container-fluid {
+    max-width: 100%;
+    padding-left: 24px !important;
+    padding-right: 24px !important;
+}
 .main-content {
     display: flex;
     flex-direction: column; /* Alinea los elementos en columna */
@@ -190,7 +195,6 @@ button:hover {
     gap: 24px;
     margin: 30px 0;
     padding: 0 24px;
-    margin-top: 400px;
 }
 
 .review-card {

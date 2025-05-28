@@ -4,9 +4,13 @@
 
 {% block content %}
 <h2>Reseñas</h2>
-<p>Bienvenido a la página de reseñas.</p>
 
 <div class="review-cards">
+     {% if reviews|length == 0 %}
+        <div class="no-reviews-msg">
+            Todavía no existen reseñas.
+        </div>
+    {% else %}
     {% for review in reviews %}
     <div class="review-card">
         <div class="review-header">
@@ -57,6 +61,7 @@
         </div>
     </div>
     {% endfor %}
+    {% endif %}
 </div>
 {% endblock %}
 

@@ -29,7 +29,6 @@ def login():
         
         if user:
             login_user(user)
-            flash("Inicio de sesión exitoso.", "success")
             return redirect(url_for("auth.reviews"))  # Redirigir a la página principal
         else:
             flash("Nombre de usuario o contraseña incorrectos.", "error")
