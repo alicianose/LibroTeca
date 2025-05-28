@@ -88,4 +88,22 @@
     function closeSidebar() {
         document.getElementById("sidebar").style.width = "0";
     }
+    function updateBookState(bookId, state) {
+    fetch('/update_book_state', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ book_id: bookId, state: state })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log("Estado actualizado");
+        } else {
+            alert("No se pudo guardar el estado");
+        }
+    })
+    .catch(error => {
+        console.error("Error al actualizar:", error);
+    });
+}
 </script>

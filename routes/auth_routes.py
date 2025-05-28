@@ -149,7 +149,8 @@ def delete_book(book_id):
 def books():
     # Cargar todos los libros desde la base de datos
     books = list(srp.load_all(Book))
-    return render_template("books.html", books=books)
+    user_books = {ub.book_id: ub.state for ub in srp.load_all(UserBook) if ub.user_id == current_user.id}
+    return render_template("books.html", books=books, user_books=user_books)
 
 @auth_bp.route("/addreview", methods=["GET", "POST"])
 @login_required
@@ -229,6 +230,48 @@ def delete_review(review_id):
             break
 
     return redirect(url_for("auth.my_reviews"))
+
+@auth_bp.route("/update_book_state", methods=["POST"])
+@login_required
+def update_book_state():
+    try:
+        data = request.get_json()
+        book_id = data.get("book_id")
+        new_state = data.get("state")
+
+        # Verifica que book_id y new_state existen
+        if not book_id or not new_state:
+            return jsonify({"success": False, "error": "Faltan datos"}), 400
+
+        # Buscar si ya existe un UserBook para este usuario y libro
+        for key in srp.load_all_keys(UserBook):
+            user_book = srp.load(key)
+            if user_book.user_id == current_user.id and user_book.book_id == book_id:
+                user_book.state = new_state
+                srp.save(user_book)
+                return jsonify({"success": True})
+
+        # Si no existe, crear uno nuevo
+        import datetime, uuid
+        now = datetime.datetime.now()
+        new_ub = UserBook(
+            id=str(uuid.uuid4()),
+            user_id=current_user.id,
+            book_id=book_id,
+            state=new_state,
+            date=now.date().isoformat(),
+            hour=now.time().strftime("%H:%M:%S")
+        )
+        srp.save(new_ub)
+        return jsonify({"success": True})
+
+    except Exception as e:
+        import traceback
+        print("Error en /update_book_state:", traceback.format_exc())
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+
 
 
 @auth_bp.route("/logout")

@@ -27,10 +27,14 @@
         <div class="book-actions">
             <button onclick="location.href='/addreview?book_id={{ book.id }}'" class="btn btn-primary btn-sm">Añadir Reseña</button>
             <select name="state" class="form-select form-select-sm" onchange="updateBookState('{{ book.id }}', this.value)">
-                <option value="Pendiente" {% if book.state == 'Pendiente' %}selected{% endif %}>Pendiente</option>
-                <option value="Leyendo" {% if book.state == 'Leyendo' %}selected{% endif %}>Leyendo</option>
-                <option value="Leído" {% if book.state == 'Leído' %}selected{% endif %}>Leído</option>
-            </select>
+    {% if book.id not in user_books %}
+        <option value="" disabled selected>Añadir a una lista</option>
+    {% endif %}
+    <option value="Pendiente" {% if user_books[book.id] == 'Pendiente' %}selected{% endif %}>Pendiente</option>
+    <option value="Leyendo" {% if user_books[book.id] == 'Leyendo' %}selected{% endif %}>Leyendo</option>
+    <option value="Leído" {% if user_books[book.id] == 'Leído' %}selected{% endif %}>Leído</option>
+</select>
+
         </div>
     </div>
     {% endfor %}
