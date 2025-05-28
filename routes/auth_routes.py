@@ -213,6 +213,25 @@ def my_reviews():
 
     return render_template("my_reviews.html", reviews=user_reviews, comments=user_comments, users=users, books=books)
 
+@auth_bp.route("/delete_review/<review_id>", methods=["POST"])
+@login_required
+def delete_review(review_id):
+    # Buscar y eliminar la reseña
+    for key in srp.load_all_keys(Review):
+        review = srp.load(key)
+        if review and review.id == review_id and review.user_id == current_user.id:
+            # Eliminar los comentarios relacionados a la reseña
+            for comment_key in srp.load_all_keys(Coment):
+                comment = srp.load(comment_key)
+                if comment and comment.review_id == review_id:
+                    srp.delete(comment_key)
+            # Eliminar la reseña
+            srp.delete(key)
+            break
+
+    return redirect(url_for("auth.my_reviews"))
+
+
 @auth_bp.route("/logout")
 @login_required
 def logout():

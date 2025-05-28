@@ -11,6 +11,7 @@
             <th>Puntuación</th>
             <th>Comentario</th>
             <th>Fecha</th>
+            <th>Acciones</th>
         </tr>
     </thead>
     <tbody>
@@ -20,6 +21,12 @@
             <td>{{ review.score }}</td>
             <td>{{ review.coment }}</td>
             <td>{{ review.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+            <td>
+    <form method="POST" action="{{ url_for('auth.delete_review', review_id=review.id) }}" style="display:inline;" onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta reseña y sus comentarios?');">
+        <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+    </form>
+</td>
+
         </tr>
         {% endfor %}
     </tbody>
