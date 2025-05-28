@@ -269,6 +269,33 @@ def update_book_state():
         import traceback
         print("Error en /update_book_state:", traceback.format_exc())
         return jsonify({"success": False, "error": str(e)}), 500
+    
+@auth_bp.route("/lists", methods=["GET"])
+@login_required
+def my_lists():
+    all_user_books = [ub for ub in srp.load_all(UserBook) if ub.user_id == current_user.id]
+    all_books = {b.id: b for b in srp.load_all(Book)}
+
+    books_with_state = []
+    for ub in all_user_books:
+        book = all_books.get(ub.book_id)
+        if book:
+            books_with_state.append({
+                "id": book.id,
+                "title": book.title,
+                "author": book.author,
+                "genre": book.genre,
+                "descr": book.descr,
+                "cover": book.cover,
+                "state": ub.state  # Estado correcto desde UserBook
+            })
+
+    # Separar en listas por estado
+    pending = [b for b in books_with_state if b["state"] == "Pendiente"]
+    reading = [b for b in books_with_state if b["state"] == "Leyendo"]
+    read = [b for b in books_with_state if b["state"] == "Leído"]
+
+    return render_template("lists.html", pending=pending, reading=reading, read=read)
 
 
 

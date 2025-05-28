@@ -1,0 +1,107 @@
+{% extends "layout.html" %}
+
+{% block title %}Mis Listas - LibroTeca{% endblock %}
+
+{% block content %}
+<h2>Mis Listas de Libros</h2>
+
+<!-- Botones de pestañas -->
+<div class="tab-container" style="margin-bottom: 20px;">
+    <button class="btn btn-outline-primary" onclick="showList('pending')">📌 Pendientes</button>
+    <button class="btn btn-outline-primary" onclick="showList('reading')">📖 Leyendo</button>
+    <button class="btn btn-outline-primary" onclick="showList('read')">✅ Leídos</button>
+</div>
+
+<!-- Lista: Pendientes -->
+<div id="pending" class="book-grid" style="display: none;">
+    {% for book in pending %}
+    <div class="book-card">
+        <div class="cover-hover">
+            <img src="{{ url_for('static', filename='uploads/' ~ (book.cover if book.cover else 'Nodisponible.jpg')) }}" alt="Portada" class="book-cover">
+            <div class="cover-sinopsis">{{ book.descr }}</div>
+        </div>
+        <h3 class="book-title">{{ book.title }}</h3>
+        <p class="book-author">Por {{ book.author }}</p>
+        <p class="book-genre">{{ book.genre }}</p>
+        <!-- Estado del libro -->
+<form>
+    <select class="form-select form-select-sm"
+            onchange="updateBookState('{{ book.id }}', this.value)">
+        <option value="Pendiente" {% if book.state == 'Pendiente' %}selected{% endif %}>Pendiente</option>
+        <option value="Leyendo" {% if book.state == 'Leyendo' %}selected{% endif %}>Leyendo</option>
+        <option value="Leído" {% if book.state == 'Leído' %}selected{% endif %}>Leído</option>
+    </select>
+</form>
+
+    </div>
+    {% else %}
+    <p>No tienes libros pendientes.</p>
+    {% endfor %}
+</div>
+
+<!-- Lista: Leyendo -->
+<div id="reading" class="book-grid" style="display: none;">
+    {% for book in reading %}
+    <div class="book-card">
+        <div class="cover-hover">
+            <img src="{{ url_for('static', filename='uploads/' ~ (book.cover if book.cover else 'Nodisponible.jpg')) }}" alt="Portada" class="book-cover">
+            <div class="cover-sinopsis">{{ book.descr }}</div>
+        </div>
+        <h3 class="book-title">{{ book.title }}</h3>
+        <p class="book-author">Por {{ book.author }}</p>
+        <p class="book-genre">{{ book.genre }}</p>
+        <!-- Estado del libro -->
+<form>
+    <select class="form-select form-select-sm"
+            onchange="updateBookState('{{ book.id }}', this.value)">
+        <option value="Pendiente" {% if book.state == 'Pendiente' %}selected{% endif %}>Pendiente</option>
+        <option value="Leyendo" {% if book.state == 'Leyendo' %}selected{% endif %}>Leyendo</option>
+        <option value="Leído" {% if book.state == 'Leído' %}selected{% endif %}>Leído</option>
+    </select>
+</form>
+
+    </div>
+    {% else %}
+    <p>No tienes libros en lectura.</p>
+    {% endfor %}
+</div>
+
+<!-- Lista: Leídos -->
+<div id="read" class="book-grid" style="display: none;">
+    {% for book in read %}
+    <div class="book-card">
+        <div class="cover-hover">
+            <img src="{{ url_for('static', filename='uploads/' ~ (book.cover if book.cover else 'Nodisponible.jpg')) }}" alt="Portada" class="book-cover">
+            <div class="cover-sinopsis">{{ book.descr }}</div>
+        </div>
+        <h3 class="book-title">{{ book.title }}</h3>
+        <p class="book-author">Por {{ book.author }}</p>
+        <p class="book-genre">{{ book.genre }}</p>
+        <!-- Estado del libro -->
+<form>
+    <select class="form-select form-select-sm"
+            onchange="updateBookState('{{ book.id }}', this.value)">
+        <option value="Pendiente" {% if book.state == 'Pendiente' %}selected{% endif %}>Pendiente</option>
+        <option value="Leyendo" {% if book.state == 'Leyendo' %}selected{% endif %}>Leyendo</option>
+        <option value="Leído" {% if book.state == 'Leído' %}selected{% endif %}>Leído</option>
+    </select>
+</form>
+
+    </div>
+    {% else %}
+    <p>No tienes libros leídos.</p>
+    {% endfor %}
+</div>
+
+<script>
+    function showList(listId) {
+        const sections = ['pending', 'reading', 'read'];
+        sections.forEach(id => {
+            document.getElementById(id).style.display = (id === listId) ? 'flex' : 'none';
+        });
+    }
+
+    // Mostrar "Pendientes" por defecto
+    showList('pending');
+</script>
+{% endblock %}
