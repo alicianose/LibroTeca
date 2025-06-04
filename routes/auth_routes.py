@@ -254,7 +254,18 @@ def my_reviews():
     users = {user.id: user.username for user in srp.load_all(User)}
     books = {book.id: book.title for book in srp.load_all(Book)}
 
-    return render_template("my_reviews.html", reviews=user_reviews, comments=user_comments, users=users, books=books)
+    # Crear el diccionario review_books: review_id -> título del libro
+    all_reviews = list(srp.load_all(Review))
+    review_books = {r.id: books[r.book_id] for r in all_reviews if r.book_id in books}
+
+    return render_template(
+        "my_reviews.html",
+        reviews=user_reviews,
+        comments=user_comments,
+        users=users,
+        books=books,
+        review_books=review_books  # <-- pásalo aquí
+    )
 
 @auth_bp.route("/delete_review/<review_id>", methods=["POST"])
 @login_required

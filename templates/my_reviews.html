@@ -4,51 +4,56 @@
 
 {% block content %}
 <h2>Mis Reseñas</h2>
-<table class="table">
-    <thead>
-        <tr>
-            <th>Libro</th>
-            <th>Puntuación</th>
-            <th>Comentario</th>
-            <th>Fecha</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for review in reviews %}
-        <tr>
-            <td>{{ books[review.book_id] }}</td>
-            <td>{{ review.score }}</td>
-            <td>{{ review.coment }}</td>
-            <td>{{ review.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
-            <td>
-    <form method="POST" action="{{ url_for('auth.delete_review', review_id=review.id) }}" style="display:inline;" onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta reseña y sus comentarios?');">
-        <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
-    </form>
-</td>
-
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="review-cards">
+    {% for review in reviews %}
+    <div class="review-card">
+        <div class="review-header">
+            <span class="review-book">{{ books[review.book_id] }}</span>
+            <span class="review-score">
+                {% for i in range(1, 6) %}
+                    {% if i <= review.score|int %}
+                        <span class="star">&#9733;</span>
+                    {% else %}
+                        <span class="star star-empty">&#9733;</span>
+                    {% endif %}
+                {% endfor %}
+            </span>
+        </div>
+        <div class="review-body">
+            <p>{{ review.coment }}</p>
+        </div>
+        <div class="review-footer">
+            <span class="review-date">{{ review.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</span>
+            <form method="POST" action="{{ url_for('auth.delete_review', review_id=review.id) }}" style="display:inline;" onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta reseña y sus comentarios?');">
+                <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+            </form>
+            <a href="{{ url_for('auth.review_detail', review_id=review.id) }}" class="btn btn-secondary btn-sm ms-2">Ver comentarios</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
 
 <h2>Mis Comentarios</h2>
-<table class="table">
-    <thead>
-        <tr>
-            <th>Reseña</th>
-            <th>Comentario</th>
-            <th>Fecha</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for coment in comments %}
-        <tr>
-            <td>{{ books[coment.review_id] if coment.review_id in books else 'Reseña desconocida' }}</td>
-            <td>{{ coment.text }}</td>
-            <td>{{ coment.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="review-cards">
+    {% for coment in comments %}
+    <div class="review-card">
+        <div class="review-header">
+            <span class="review-book">
+                {% if coment.review_id in review_books %}
+                    {{ review_books[coment.review_id] }}
+                {% else %}
+                    Reseña desconocida
+                {% endif %}
+            </span>
+        </div>
+        <div class="review-body">
+            <p>{{ coment.text }}</p>
+        </div>
+        <div class="review-footer">
+            <span class="review-date">{{ coment.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</span>
+            <a href="{{ url_for('auth.review_detail', review_id=coment.review_id) }}" class="btn btn-secondary btn-sm">Ver reseña y comentarios</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
 {% endblock %}
