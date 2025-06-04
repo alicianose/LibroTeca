@@ -9,14 +9,18 @@
     <div class="book-card">
         {% if book.cover %}
         <div class="cover-hover">
+            <a href="{{ url_for('auth.book', book_id=book.id) }}">
             <img src="{{ url_for('static', filename='uploads/' ~ book.cover) }}" alt="Portada" class="book-cover">
+            </a>
             <div class="cover-sinopsis">
                 {{ book.descr }}
             </div>
         </div>
         {% else %}
         <div class="cover-hover">
+            <a href="{{ url_for('auth.book', book_id=book.id) }}">
             <img src="{{ url_for('static', filename='uploads/Nodisponible.jpg') }}" alt="Sin portada disponible" class="book-cover">
+            </a>
             <div class="cover-sinopsis">
                 {{ book.descr }}
             </div>

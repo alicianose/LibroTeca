@@ -1,0 +1,64 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ book.title }} - Detalle{% endblock %}
+
+{% block content %}
+<div class="book-detail-container">
+    <div class="book-info">
+        <img src="{{ url_for('static', filename='uploads/' ~ (book.cover if book.cover else 'Nodisponible.jpg')) }}" class="book-cover-lg">
+        <div class="book-meta">
+            <h2>{{ book.title }}</h2>
+            <p><strong>Autor:</strong> {{ book.author }}</p>
+            <p><strong>Género:</strong> {{ book.genre }}</p>
+            <p><strong>Media de valoraciones:</strong> {{ avg_score }}</p>
+            <p><strong>Sinopsis:</strong> {{ book.descr }}</p>
+
+            <label for="state">Estado en tu lista:</label>
+            <select id="state" class="form-select" onchange="updateBookState('{{ book.id }}', this.value)">
+                <option disabled {% if current_state == 'Añadir a una lista' %}selected{% endif %}>Añadir a una lista</option>
+                <option value="Pendiente" {% if current_state == 'Pendiente' %}selected{% endif %}>Pendiente</option>
+                <option value="Leyendo" {% if current_state == 'Leyendo' %}selected{% endif %}>Leyendo</option>
+                <option value="Leído" {% if current_state == 'Leído' %}selected{% endif %}>Leído</option>
+            </select>
+        </div>
+    </div>
+
+    <hr>
+
+    <div style="margin-bottom: 20px;">
+    <a href="{{ url_for('auth.add_review', book_id=book.id) }}" class="btn btn-primary">
+        Añadir Reseña
+    </a>
+    </div>
+
+    <h3>Reseñas</h3>
+    <div class="review-section">
+        {% for review in reviews %}
+        <div class="review-card">
+            <p><strong>{{ review.user_id }}</strong> - {{ review.timestamp.strftime('%Y-%m-%d') }}</p>
+            <p>{{ review.coment }}</p>
+            <p><strong>Puntuación:</strong> {{ review.score }} ⭐</p>
+            <p><strong>Likes:</strong> {{ review_likes[review.id] }}</p>
+        </div>
+        {% else %}
+        <p>No hay reseñas para este libro.</p>
+        {% endfor %}
+    </div>
+
+    <hr>
+</div>
+
+<script>
+function updateBookState(bookId, state) {
+    fetch('/update_book_state', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({book_id: bookId, state: state})
+    })
+    .then(response => {
+        if (!response.ok) throw new Error("Error al actualizar");
+    })
+    .catch(error => alert("Error al guardar estado: " + error.message));
+}
+</script>
+{% endblock %}

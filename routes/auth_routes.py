@@ -152,6 +152,37 @@ def books():
     user_books = {ub.book_id: ub.state for ub in srp.load_all(UserBook) if ub.user_id == current_user.id}
     return render_template("books.html", books=books, user_books=user_books)
 
+@auth_bp.route("/books/<book_id>")
+@login_required
+def book(book_id):
+    book = next((b for b in srp.load_all(Book) if b.id == book_id), None)
+    if not book:
+        abort(404)
+
+    # Obtener nombre del usuario que agregó el libro
+
+    # Calcular media de puntuaciones
+    reviews = [r for r in srp.load_all(Review) if r.book_id == book_id]
+    avg_score = round(sum(r.score for r in reviews) / len(reviews), 1) if reviews else "Sin valoraciones"
+
+    # Ordenar reseñas por número de likes descendente
+    likes = list(srp.load_all(LikeReview))
+    review_likes = {r.id: sum(1 for l in likes if l.review_id == r.id) for r in reviews}
+    reviews.sort(key=lambda r: review_likes.get(r.id, 0), reverse=True)
+
+    # Ver si el libro ya está en la lista personal del usuario
+    user_book = next((ub for ub in srp.load_all(UserBook)
+                      if ub.user_id == current_user.id and ub.book_id == book_id), None)
+    current_state = user_book.state if user_book else "Añadir a una lista"
+
+    return render_template("book.html",
+                           book=book,
+                           avg_score=avg_score,
+                           reviews=reviews,
+                           review_likes=review_likes,
+                           current_state=current_state)
+
+
 @auth_bp.route("/addreview", methods=["GET", "POST"])
 @login_required
 def add_review():
