@@ -3,13 +3,13 @@
 {% block title %}Mis Listas - LibroTeca{% endblock %}
 
 {% block content %}
-<h2>Mis Listas de Libros</h2>
+<h2>Mis Listas</h2>
 
 <!-- Botones de pestañas -->
 <div class="tab-container" style="margin-bottom: 20px;">
-    <button class="btn btn-outline-primary" onclick="showList('pending')">📌 Pendientes</button>
-    <button class="btn btn-outline-primary" onclick="showList('reading')">📖 Leyendo</button>
-    <button class="btn btn-outline-primary" onclick="showList('read')">✅ Leídos</button>
+    <button id="tab-pending" class="btn btn-outline-primary" onclick="showList('pending')">📌 Pendientes</button>
+    <button id="tab-reading" class="btn btn-outline-primary" onclick="showList('reading')">📖 Leyendo</button>
+    <button id="tab-read" class="btn btn-outline-primary" onclick="showList('read')">✅ Leídos</button>
 </div>
 
 <!-- Lista: Pendientes -->
@@ -105,9 +105,13 @@
         const sections = ['pending', 'reading', 'read'];
         sections.forEach(id => {
             document.getElementById(id).style.display = (id === listId) ? 'flex' : 'none';
+            // Cambia el estado visual del botón
+            const btn = document.getElementById('tab-' + id);
+            if (btn) {
+                btn.classList.toggle('active-tab', id === listId);
+            }
         });
     }
-
     // Mostrar "Pendientes" por defecto
     showList('pending');
 </script>

@@ -271,3 +271,8 @@ button:hover {
 .like-heart:hover .heart {
     color: #ffb3b3;
 }
+.tab-container .active-tab {
+    background-color: #0d6efd;
+    color: #fff;
+    border-color: #0d6efd;
+}

@@ -120,6 +120,12 @@ def add_book():
         genre = request.form.get("genre")
         # Manejar la subida de la portada
         cover = request.files["cover"]
+         # --- Comprobar si ya existe un libro con ese título y autor ---
+        exists = srp.find_first(Book, lambda b: b.title.strip().lower() == title.strip().lower() and b.author.strip().lower() == author.strip().lower())
+        if exists:
+            flash("Ya existe un libro con ese título y autor.", "danger")
+            return redirect(url_for("auth.add_book"))
+
         if cover:
             filename = secure_filename(cover.filename)
             cover.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
