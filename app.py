@@ -1,7 +1,7 @@
 import os
 from flask import Flask, render_template
 import sirope
-from flask_login import LoginManager
+from flask_login import LoginManager, current_user
 from routes.auth_routes import auth_bp  # Importar el Blueprint
 from models.user import User  # Importar la clase User
 from werkzeug.utils import secure_filename
@@ -29,6 +29,9 @@ login_manager.login_view = "auth.login"  # Ruta para redirigir si no está auten
 def load_user(user_id):
     return srp.find_first(User, lambda u: u.id == user_id)
 
+@app.context_processor
+def inject_user():
+    return dict(current_user=current_user)
 
 
 @app.route("/")

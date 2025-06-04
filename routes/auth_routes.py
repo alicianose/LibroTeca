@@ -2,7 +2,7 @@ import uuid
 from werkzeug.utils import secure_filename
 import os
 from flask import Blueprint, jsonify, render_template, redirect, request, url_for, flash, current_app
-from flask_login import login_user, logout_user, login_required
+from flask_login import login_user, logout_user, login_required, current_user
 import sirope
 from flask_login import current_user
 from models.user import User
@@ -14,8 +14,10 @@ from models.userbook import UserBook
 from datetime import datetime
 
 
+
 auth_bp = Blueprint("auth", __name__)
 srp = sirope.Sirope()
+
 
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
@@ -169,7 +171,7 @@ def book(book_id):
 
     # Calcular media de puntuaciones
     reviews = [r for r in srp.load_all(Review) if r.book_id == book_id]
-    avg_score = round(sum(r.score for r in reviews) / len(reviews), 1) if reviews else "Sin valoraciones"
+    avg_score = round(sum(int(r.score) for r in reviews) / len(reviews), 1) if reviews else "Sin valoraciones"
 
     # Ordenar reseñas por número de likes descendente
     likes = list(srp.load_all(LikeReview))
@@ -181,12 +183,16 @@ def book(book_id):
                       if ub.user_id == current_user.id and ub.book_id == book_id), None)
     current_state = user_book.state if user_book else "Añadir a una lista"
 
+    users = {u.id: u.username for u in srp.load_all(User)}
+
+
     return render_template("book.html",
                            book=book,
                            avg_score=avg_score,
                            reviews=reviews,
                            review_likes=review_likes,
-                           current_state=current_state)
+                           current_state=current_state, 
+                           users=users)
 
 
 @auth_bp.route("/addreview", methods=["GET", "POST"])

@@ -8,10 +8,10 @@
         <img src="{{ url_for('static', filename='uploads/' ~ (book.cover if book.cover else 'Nodisponible.jpg')) }}" class="book-cover-lg">
         <div class="book-meta">
             <h2>{{ book.title }}</h2>
-            <p><strong>Autor:</strong> {{ book.author }}</p>
-            <p><strong>Género:</strong> {{ book.genre }}</p>
-            <p><strong>Media de valoraciones:</strong> {{ avg_score }}</p>
-            <p><strong>Sinopsis:</strong> {{ book.descr }}</p>
+            <p>Autor: <b>{{ book.author }}</b></p>
+            <p>Género: <b>{{ book.genre }}</b></p>
+            <p>Media de valoraciones: <b> {{ avg_score }}</b></p>
+            <p>Sinopsis: <b>{{ book.descr }}</b></p>
 
             <label for="state">Estado en tu lista:</label>
             <select id="state" class="form-select" onchange="updateBookState('{{ book.id }}', this.value)">
@@ -35,7 +35,7 @@
     <div class="review-section">
         {% for review in reviews %}
         <div class="review-card">
-            <p><strong>{{ review.user_id }}</strong> - {{ review.timestamp.strftime('%Y-%m-%d') }}</p>
+            <p><strong>{{ users[review.user_id] }}</strong> </p>
             <p>{{ review.coment }}</p>
             <p><strong>Puntuación:</strong> {{ review.score }} ⭐</p>
             <p><strong>Likes:</strong> {{ review_likes[review.id] }}</p>

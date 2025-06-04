@@ -1,7 +1,8 @@
 body {
     background-color: #eaace2;
     font-family: Quicksand;
-    font-weight: bold;
+        padding-top: 56px;
+
 }
 h1 {
     color: #130c12;
@@ -27,13 +28,13 @@ button:hover {
     padding-right: 24px !important;
 }
 .main-content {
-    display: flex;
     flex-direction: column; /* Alinea los elementos en columna */
     justify-content: center; /* Centra verticalmente */
     align-items: center; /* Centra horizontalmente */
     height: calc(100vh - 80px); /* Resta la altura del header (ajusta según sea necesario) */
     text-align: center; /* Centra el texto dentro de los elementos */
     margin-top: 20px; /* Espacio superior opcional */
+
 }
 /* Estilo del menú lateral */
 .sidebar {
@@ -77,6 +78,7 @@ button:hover {
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Ajusta el número de columnas automáticamente */
     gap: 20px; /* Espaciado entre las tarjetas */
     padding: 20px;
+    padding-top: 56px;
     width: 100%; /* Asegura que ocupe todo el ancho */
     box-sizing: border-box;
 }
@@ -275,4 +277,37 @@ button:hover {
     background-color: #0d6efd;
     color: #fff;
     border-color: #0d6efd;
+}
+.book-detail-container {
+    justify-content: center;
+    align-items: center;
+
+}
+.book-info{
+    margin-top: 40px;
+    align-items: center;
+}
+.book-cover-lg {
+        margin-top: 40px;
+
+    width: 180px;
+    max-width: 90vw;
+    height: auto;
+    object-fit: cover;
+    border-radius: 10px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.10);
+    margin-bottom: 20px;
+    align-items: center;
+}
+@media (max-width: 600px) {
+    .book-detail-container {
+        margin-top: 30px;
+    }
+    .book-cover-lg {
+        width: 90vw;
+        max-width: 30px;
+        height: auto;
+
+    }
+
 }
