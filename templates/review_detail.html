@@ -18,13 +18,33 @@
     <div class="review-body">
         <p>{{ review.coment }}</p>
     </div>
+    <div class="review-footer">
+        <span class="like-heart">
+            <span class="heart {% if review.id in user_likes %}liked{% endif %}">&#10084;</span>
+        </span>
+        <span id="like-count-{{ review.id }}">{{ likes[review.id] if review.id in likes else 0 }}</span>
+        <span class="review-date" style="margin-left:auto;">{{ review.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</span>
+    </div>
     <div class="review-comments">
         <h5>Todos los comentarios:</h5>
         <ul>
-            {% for coment in comments %}
-                <li><strong>{{ users[coment.user_id] }}</strong>: {{ coment.text }}</li>
+            {% for coment in comments|sort(attribute='timestamp', reverse=True) %}
+                <li>
+                    <strong>{{ users[coment.user_id] }}</strong>:
+                    {{ coment.text }}
+                    <span class="review-date" style="color:#888; font-size:0.95em;">
+                        ({{ coment.timestamp.strftime('%Y-%m-%d %H:%M:%S') }})
+                    </span>
+                </li>
             {% endfor %}
         </ul>
+        <h6>Añadir un comentario:</h6>
+    <form method="POST" action="{{ url_for('auth.add_comment', review_id=review.id) }}">
+        <div class="mb-2">
+            <textarea name="text" class="form-control" rows="2" required placeholder="Escribe tu comentario..."></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary btn-sm">Comentar</button>
+    </form>
     </div>
     <a href="{{ url_for('auth.reviews') }}" class="btn btn-secondary btn-sm">Volver</a>
 </div>

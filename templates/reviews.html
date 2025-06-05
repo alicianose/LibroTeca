@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 
-{% block title %}Reseñas - LibroTeca{% endblock %}
+{% block title %}Reseñas{% endblock %}
 
 {% block content %}
 <h2>Reseñas</h2>
@@ -26,39 +26,21 @@
                 {% endfor %}
             </span>
         </div>
+        <hr class="review-divider">
         <div class="review-body">
             <p>{{ review.coment }}</p>
         </div>
         <div class="review-footer">
-            <span class="review-date">{{ review.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</span>
-            <span class="like-heart" onclick="toggleLike('{{ review.id }}', this)">
-    <span class="heart {% if review.id in user_likes %}liked{% endif %}">&#10084;</span>
-</span>
-<span id="like-count-{{ review.id }}">{{ likes[review.id] if review.id in likes else 0 }}</span>
-        </div>
-         <div class="review-comments">
-            <h5>Comentarios:</h5>
-            <ul>
-                {% if comments[review.id] is defined and comments[review.id]|length > 0 %}
-                    <li>
-                        <strong>{{ users[comments[review.id][0].user_id] }}</strong>:
-                        {{ comments[review.id][0].text }}
-                        {% if comments[review.id]|length > 1 %}
-                            <a href="{{ url_for('auth.review_detail', review_id=review.id) }}">Ver todos los comentarios ({{ comments[review.id]|length }})</a>
-                        {% endif %}
-                    </li>
-                {% else %}
-                    <li>No hay comentarios.</li>
-                {% endif %}
-            </ul>
-             <form method="POST" action="{{ url_for('auth.reviews') }}">
-                <input type="hidden" name="review_id" value="{{ review.id }}">
-                <div class="mb-3">
-                    <textarea class="form-control" name="text" rows="2" placeholder="Añadir un comentario..." required></textarea>
-                </div>
-                <button type="submit" class="btn btn-primary btn-sm">Comentar</button>
-            </form>
-        </div>
+        <span class="like-heart" onclick="toggleLike('{{ review.id }}', this)">
+            <span class="heart {% if review.id in user_likes %}liked{% endif %}">&#10084;</span>
+        </span>
+        <span id="like-count-{{ review.id }}">{{ likes[review.id] if review.id in likes else 0 }}</span>
+        <span class="review-date" style="margin-left:auto;">{{ review.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</span>
+        <a href="{{ url_for('auth.review_detail', review_id=review.id) }}" class="btn btn-secondary btn-sm ms-2">
+            Ver reseña
+        </a>
+    </div>
+        
     </div>
     {% endfor %}
     {% endif %}

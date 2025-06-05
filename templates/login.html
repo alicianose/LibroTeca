@@ -5,6 +5,8 @@
 {% block content %}
 <h2>Iniciar Sesión</h2>
 <form method="POST" action="/login">
+        <div class = "form-container">
+
     <div class="mb-3">
         <label for="username" class="form-label">Usuario</label>
         <input type="text" class="form-control" id="username" name="username" required>
@@ -14,5 +16,8 @@
         <input type="password" class="form-control" id="password" name="password" required>
     </div>
     <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
+            <a href="{{ url_for('auth.register') }}" class="btn btn-secondary ms-2">Registrarse</a>
+
+        </div>
 </form>
 {% endblock %}

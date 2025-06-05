@@ -218,11 +218,7 @@ button:hover {
 }
 
 .review-user {
-    color: #007bff;
-}
-
-.review-book {
-    color: #333;
+    color: #e790dc;
 }
 
 .review-score .star {
@@ -237,6 +233,7 @@ button:hover {
 .review-body {
     margin: 10px 0;
     font-size: 1.1em;
+    font-weight: bold;    
 }
 
 .review-footer {
@@ -310,4 +307,12 @@ button:hover {
 
     }
 
+}
+.form-container {
+    max-width: 420px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 32px 24px;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
 }

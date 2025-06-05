@@ -5,6 +5,7 @@
 {% block content %}
 <h2>Añadir Libro</h2>
 <form method="POST" action="/addbook" enctype="multipart/form-data">
+    <div class = "form-container">
     <div class="mb-3">
         <label for="title" class="form-label">Título</label>
         <input type="text" class="form-control" id="title" name="title" required>
@@ -30,5 +31,6 @@
         <input type="text" class="form-control" id="addedby" name="addedby" value="{{ current_user.username }}" readonly>
     </div>
     <button type="submit" class="btn btn-primary">Añadir Libro</button>
+    </div>
 </form>
 {% endblock %}

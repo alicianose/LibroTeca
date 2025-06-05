@@ -212,6 +212,17 @@ def add_review():
         return redirect(url_for("auth.books"))
 
     return render_template("add_review.html", book_id=book_id)
+@auth_bp.route("/add_comment/<review_id>", methods=["POST"])
+@login_required
+def add_comment(review_id):
+    text = request.form.get("text")
+    if text:
+        new_comment = Coment(str(uuid.uuid4()), current_user.id, review_id, text, datetime.now())
+        srp.save(new_comment)
+        flash("Comentario añadido correctamente.", "success")
+    else:
+        flash("El comentario no puede estar vacío.", "danger")
+    return redirect(url_for("auth.review_detail", review_id=review_id))
 
 @auth_bp.route("/like_review", methods=["POST"])
 @login_required
