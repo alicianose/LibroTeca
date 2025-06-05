@@ -1,5 +1,6 @@
 import uuid
 from werkzeug.utils import secure_filename
+from werkzeug.security import generate_password_hash, check_password_hash
 import os
 from flask import Blueprint, jsonify, render_template, redirect, request, url_for, flash, current_app
 from flask_login import login_user, logout_user, login_required, current_user
@@ -27,9 +28,9 @@ def login():
         password = request.form.get("password")
         
         # Buscar el usuario en la base de datos
-        user = srp.find_first(User, lambda u: u.username == username and u.password == password)
+        user = srp.find_first(User, lambda u: u.username == username)
         
-        if user:
+        if user and check_password_hash(user.password, password):
             login_user(user)
             return redirect(url_for("auth.reviews"))  
         else:
@@ -44,8 +45,10 @@ def register():
         username = request.form.get("username")
         email = request.form.get("email")
         password = request.form.get("password")
+        hashed_password = generate_password_hash(password)
+
         
-        user = User(str(uuid.uuid4()), name, username, email, password)
+        user = User(str(uuid.uuid4()), name, username, email, hashed_password)
         srp.save(user)
         flash("Registro exitoso. Ahora puedes iniciar sesión.", "success")
         return redirect(url_for("auth.login"))
