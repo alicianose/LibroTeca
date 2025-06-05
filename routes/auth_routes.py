@@ -31,23 +31,20 @@ def login():
         
         if user:
             login_user(user)
-            return redirect(url_for("auth.reviews"))  # Redirigir a la página principal
+            return redirect(url_for("auth.reviews"))  
         else:
             flash("Nombre de usuario o contraseña incorrectos.", "error")
     
-    # Renderizar la plantilla de inicio de sesión para solicitudes GET
     return render_template("login.html")
 
 @auth_bp.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
-        # Procesar los datos del formulario de registro
         name = request.form.get("name")
         username = request.form.get("username")
         email = request.form.get("email")
         password = request.form.get("password")
         
-        # Guardar el usuario en la base de datos usando sirope
         user = User(str(uuid.uuid4()), name, username, email, password)
         srp.save(user)
         flash("Registro exitoso. Ahora puedes iniciar sesión.", "success")
@@ -61,23 +58,16 @@ def debug_users():
     books = list(srp.load_all(Book))
     return render_template("debug_users.html", users=users, books=books)
 
-@auth_bp.route("/reviews", methods=["GET", "POST"])
+@auth_bp.route("/reviews", methods=["GET"])
 @login_required
 def reviews():
-    if request.method == "POST":
-        # Procesar el comentario
-        review_id = request.form.get("review_id")
-        text = request.form.get("text")
-        user_id = current_user.id
+    page = int(request.args.get("page", 1))
+    per_page = 10 
 
-        # Crear un nuevo comentario y guardarlo en la base de datos
-        new_coment = Coment(str(uuid.uuid4()), user_id, review_id, text)
-        srp.save(new_coment)
-        flash("Comentario añadido exitosamente.", "success")
-        return redirect(url_for("auth.reviews"))
+    all_reviews = sorted(srp.load_all(Review), key=lambda r: r.timestamp, reverse=True)
+    total = len(all_reviews)
+    reviews = all_reviews[(page-1)*per_page : page*per_page]
 
-    # GET: Renderizar la página de reseñas
-    reviews = sorted(srp.load_all(Review), key=lambda r: r.timestamp, reverse=True)
     users = {user.id: user.username for user in srp.load_all(User)}
     books = {book.id: book.title for book in srp.load_all(Book)}
     likes = {}
@@ -91,14 +81,18 @@ def reviews():
         if like.user_id == current_user.id:
             user_likes.add(like.review_id)
 
-    # Cargar los comentarios
-    comments = {}
-    for coment in srp.load_all(Coment):
-        if coment.review_id not in comments:
-            comments[coment.review_id] = []
-        comments[coment.review_id].append(coment)
+    total_pages = (total + per_page - 1) // per_page
 
-    return render_template("reviews.html", reviews=reviews, users=users, books=books, likes=likes, user_likes=user_likes, comments=comments)
+    return render_template(
+        "reviews.html",
+        reviews=reviews,
+        users=users,
+        books=books,
+        likes=likes,
+        user_likes=user_likes,
+        page=page,
+        total_pages=total_pages
+    )
 @auth_bp.route("/review/<review_id>")
 @login_required
 def review_detail(review_id):
@@ -115,14 +109,12 @@ def review_detail(review_id):
 @login_required
 def add_book():
     if request.method == "POST":
-        # Procesar los datos del formulario
         title = request.form.get("title")
         author = request.form.get("author")
         descr = request.form.get("descr")
         genre = request.form.get("genre")
-        # Manejar la subida de la portada
         cover = request.files["cover"]
-         # --- Comprobar si ya existe un libro con ese título y autor ---
+         #Comprobar si ya existe un libro con ese título y autor
         exists = srp.find_first(Book, lambda b: b.title.strip().lower() == title.strip().lower() and b.author.strip().lower() == author.strip().lower())
         if exists:
             flash("Ya existe un libro con ese título y autor.", "danger")
@@ -134,7 +126,6 @@ def add_book():
         else:
             filename = "Nodisponible.jpg"
 
-        # Crear un nuevo libro y guardarlo en la base de datos
         new_book = Book(str(uuid.uuid4()), title, author, descr, filename, genre, current_user.username)
         srp.save(new_book)
         flash("Libro añadido exitosamente.", "success")
@@ -155,10 +146,20 @@ def delete_book(book_id):
 @auth_bp.route("/books", methods=["GET"])
 @login_required
 def books():
-    # Cargar todos los libros desde la base de datos
-    books = list(srp.load_all(Book))
+    page = int(request.args.get("page", 1))
+    per_page = 14
+    all_books = list(srp.load_all(Book))
+    total = len(all_books)
+    books = all_books[(page-1)*per_page : page*per_page]
     user_books = {ub.book_id: ub.state for ub in srp.load_all(UserBook) if ub.user_id == current_user.id}
-    return render_template("books.html", books=books, user_books=user_books)
+    total_pages = (total + per_page - 1) // per_page
+    return render_template(
+        "books.html",
+        books=books,
+        user_books=user_books,
+        page=page,
+        total_pages=total_pages
+    )
 
 @auth_bp.route("/books/<book_id>")
 @login_required
@@ -167,18 +168,14 @@ def book(book_id):
     if not book:
         abort(404)
 
-    # Obtener nombre del usuario que agregó el libro
 
-    # Calcular media de puntuaciones
     reviews = [r for r in srp.load_all(Review) if r.book_id == book_id]
     avg_score = round(sum(int(r.score) for r in reviews) / len(reviews), 1) if reviews else "Sin valoraciones"
 
-    # Ordenar reseñas por número de likes descendente
     likes = list(srp.load_all(LikeReview))
     review_likes = {r.id: sum(1 for l in likes if l.review_id == r.id) for r in reviews}
     reviews.sort(key=lambda r: review_likes.get(r.id, 0), reverse=True)
 
-    # Ver si el libro ya está en la lista personal del usuario
     user_book = next((ub for ub in srp.load_all(UserBook)
                       if ub.user_id == current_user.id and ub.book_id == book_id), None)
     current_state = user_book.state if user_book else "Añadir a una lista"
@@ -200,12 +197,10 @@ def book(book_id):
 def add_review():
     book_id = request.args.get("book_id")
     if request.method == "POST":
-        # Procesar los datos del formulario de reseña
         score = request.form.get("score")
         coment = request.form.get("coment")
         user_id = current_user.id
        
-        # Crear una nueva reseña y guardarla en la base de datos
         new_review = Review(str(uuid.uuid4()), user_id, book_id, score, coment, datetime.now())
         srp.save(new_review)
         flash("Reseña añadida exitosamente.", "success")
@@ -244,38 +239,60 @@ def like_review():
         new_like = LikeReview(str(uuid.uuid4()), user_id, review_id)
         srp.save(new_like)
         return jsonify({"status": "added"}) 
-@auth_bp.route("/mybooks")
+@auth_bp.route("/mybooks", methods=["GET"])
 @login_required
 def my_books():
-    books = srp.load_all(Book)
-    my_books = [b for b in books if b.addedby == current_user.username]
-    return render_template("my_books.html", books=my_books)
+    page = int(request.args.get("page", 1))
+    per_page = 14 
+    all_books = [b for b in srp.load_all(Book) if b.addedby == current_user.username]
+    total = len(all_books)
+    books = all_books[(page-1)*per_page : page*per_page]
+    total_pages = (total + per_page - 1) // per_page
 
+    return render_template(
+        "my_books.html",
+        books=books,
+        page=page,
+        total_pages=total_pages
+    )
 
 @auth_bp.route("/myreviews", methods=["GET"])
 @login_required
 def my_reviews():
-    # Filtrar las reseñas creadas por el usuario actual
+    page = int(request.args.get("page", 1))
+    per_page = 5  # reseñas por página
+    comments_page = int(request.args.get("comments_page", 1))
+    comments_per_page = 5  # comentarios por página
+
+    # Reseñas 
     user_reviews = [review for review in srp.load_all(Review) if review.user_id == current_user.id]
+    total_reviews = len(user_reviews)
+    reviews = user_reviews[(page-1)*per_page : page*per_page]
 
-    # Filtrar los comentarios hechos por el usuario actual
+    # Comentarios 
     user_comments = [coment for coment in srp.load_all(Coment) if coment.user_id == current_user.id]
+    total_comments = len(user_comments)
+    comments = user_comments[(comments_page-1)*comments_per_page : comments_page*comments_per_page]
 
-    # Cargar los datos necesarios para mostrar las reseñas y comentarios
     users = {user.id: user.username for user in srp.load_all(User)}
     books = {book.id: book.title for book in srp.load_all(Book)}
-
-    # Crear el diccionario review_books: review_id -> título del libro
     all_reviews = list(srp.load_all(Review))
     review_books = {r.id: books[r.book_id] for r in all_reviews if r.book_id in books}
 
+    total_pages = (total_reviews + per_page - 1) // per_page
+    comments_total_pages = (total_comments + comments_per_page - 1) // comments_per_page
+
     return render_template(
         "my_reviews.html",
-        reviews=user_reviews,
-        comments=user_comments,
+        reviews=reviews,
+        comments=comments,
         users=users,
         books=books,
-        review_books=review_books  # <-- pásalo aquí
+        review_books=review_books,
+        page=page,
+        total_pages=total_pages,
+        comments_page=comments_page,
+        comments_total_pages=comments_total_pages
     )
 
 @auth_bp.route("/delete_review/<review_id>", methods=["POST"])

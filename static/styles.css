@@ -316,3 +316,10 @@ button:hover {
     border-radius: 12px;
     box-shadow: 0 2px 12px rgba(0,0,0,0.08);
 }
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    margin: 24px 0;
+}

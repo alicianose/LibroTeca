@@ -45,5 +45,14 @@
     {% endfor %}
     {% endif %}
 </div>
+<div class="pagination">
+    {% if page > 1 %}
+        <a href="{{ url_for('auth.reviews', page=page-1) }}" class="btn btn-secondary btn-sm">Anterior</a>
+    {% endif %}
+    <span>Página {{ page }} de {{ total_pages }}</span>
+    {% if page < total_pages %}
+        <a href="{{ url_for('auth.reviews', page=page+1) }}" class="btn btn-secondary btn-sm">Siguiente</a>
+    {% endif %}
+</div>
 {% endblock %}
 

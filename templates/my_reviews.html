@@ -32,6 +32,15 @@
     </div>
     {% endfor %}
 </div>
+<div class="pagination">
+    {% if page > 1 %}
+        <a href="{{ url_for('auth.my_reviews', page=page-1) }}" class="btn btn-secondary btn-sm">Anterior</a>
+    {% endif %}
+    <span>Página {{ page }} de {{ total_pages }}</span>
+    {% if page < total_pages %}
+        <a href="{{ url_for('auth.my_reviews', page=page+1) }}" class="btn btn-secondary btn-sm">Siguiente</a>
+    {% endif %}
+</div>
 
 <h2>Mis Comentarios</h2>
 <div class="review-cards">
@@ -55,5 +64,15 @@
         </div>
     </div>
     {% endfor %}
+</div>
+
+<div class="pagination">
+    {% if comments_page > 1 %}
+        <a href="{{ url_for('auth.my_reviews', page=page, comments_page=comments_page-1) }}" class="btn btn-secondary btn-sm">Anterior</a>
+    {% endif %}
+    <span>Página {{ comments_page }} de {{ comments_total_pages }}</span>
+    {% if comments_page < comments_total_pages %}
+        <a href="{{ url_for('auth.my_reviews', page=page, comments_page=comments_page+1) }}" class="btn btn-secondary btn-sm">Siguiente</a>
+    {% endif %}
 </div>
 {% endblock %}
