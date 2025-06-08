@@ -167,7 +167,7 @@ def delete_book(book_id):
 @login_required
 def books():
     page = int(request.args.get("page", 1))
-    per_page = 14
+    per_page = 10
     all_books = list(srp.load_all(Book))
     total = len(all_books)
     books = all_books[(page-1)*per_page : page*per_page]
@@ -186,7 +186,7 @@ def books():
 def book(book_id):
     book = next((b for b in srp.load_all(Book) if b.id == book_id), None)
     if not book:
-        abort(404)
+        breakpoint
 
 
     reviews = [r for r in srp.load_all(Review) if r.book_id == book_id]
@@ -392,7 +392,7 @@ def my_lists():
                 "genre": book.genre,
                 "descr": book.descr,
                 "cover": book.cover,
-                "state": ub.state  # Estado correcto desde UserBook
+                "state": ub.state  
             })
 
     # Separar en listas por estado

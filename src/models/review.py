@@ -7,4 +7,4 @@ class Review:
         self.book_id = book_id
         self.score = score
         self.coment = coment
-        self.timestamp = timestamp or datetime.now()  # Guardar la fecha y hora actuales por defecto
+        self.timestamp = timestamp or datetime.now()  

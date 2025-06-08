@@ -11,16 +11,53 @@ h1 {
 button, .btn-primary {
     color: #eaace2;
     background-color: #111;
-    border-radius: 10px; /* Hace los bordes redondeados */
-    padding: 10px 20px; /* Agrega un poco de espacio interno */
-    border: none; /* Elimina el borde predeterminado */
-    cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
-    transition: background-color 0.3s ease; /* Transición suave al cambiar el color */
+    border-radius: 10px; 
+    padding: 10px 20px; 
+    border: none; 
+    cursor: pointer; 
+    transition: background-color 0.3s ease;
     margin-top: 2px;
 }
+.tab-btn {
+    background: #fff;
+    color: #e790dc;
+    border: 2px solid #e790dc;
+    border-bottom: none;
+    border-radius: 18px 18px 0 0;
+    padding: 10px 28px;
+    margin-right: 6px;
+    font-size: 1.08em;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(231, 144, 220, 0.08);
+    transition: 
+        background 0.3s, 
+        color 0.2s, 
+        border-color 0.2s, 
+        transform 0.2s;
+    outline: none;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+}
 
+.tab-btn.active-tab,
+.tab-btn:focus {
+    background: linear-gradient(90deg, #eaace2 0%, #e790dc 100%);
+    color: #fff;
+    border-color: #e790dc;
+    transform: translateY(-2px) scale(1.04);
+    box-shadow: 0 4px 16px rgba(231, 144, 220, 0.15);
+}
+
+.tab-container {
+    display: flex;
+    align-items: flex-end;
+    background: none;
+    border-bottom: 2px solid #e790dc;
+    margin-bottom: 24px;
+    padding-bottom: 0;
+}
 button:hover {
-    background-color: #333; /* Cambia el color de fondo al pasar el mouse */
+    background-color: #333; 
 }
 .container, .container-fluid {
     max-width: 100%;
@@ -28,29 +65,27 @@ button:hover {
     padding-right: 24px !important;
 }
 .main-content {
-    flex-direction: column; /* Alinea los elementos en columna */
-    justify-content: center; /* Centra verticalmente */
-    align-items: center; /* Centra horizontalmente */
-    height: calc(100vh - 80px); /* Resta la altura del header (ajusta según sea necesario) */
-    text-align: center; /* Centra el texto dentro de los elementos */
-    margin-top: 20px; /* Espacio superior opcional */
+    flex-direction: column;
+    justify-content: center; 
+    align-items: center; 
+    height: calc(100vh - 80px); 
+    text-align: center; 
+    margin-top: 20px; 
 
 }
-/* Estilo del menú lateral */
 .sidebar {
-    height: 100%; /* Altura completa */
-    width: 0; /* Ancho inicial cerrado */
-    position: fixed; /* Fijo en la pantalla */
-    z-index: 1; /* Encima del contenido */
+    height: 100%;
+    width: 0; 
+    position: fixed; 
+    z-index: 1; 
     top: 0;
     right: 0;
-    background-color: #111; /* Color de fondo */
-    overflow-x: hidden; /* Ocultar scroll horizontal */
-    transition: 0.5s; /* Transición suave */
-    padding-top: 60px; /* Espacio superior */
+    background-color: #111;
+    overflow-x: hidden; 
+    transition: 0.5s; 
+    padding-top: 60px; 
 }
 
-/* Links dentro del menú */
 .sidebar a {
     padding: 10px 15px;
     text-decoration: none;
@@ -60,12 +95,10 @@ button:hover {
     transition: 0.3s;
 }
 
-/* Cambiar color al pasar el mouse */
 .sidebar a:hover {
     color: #f1f1f1;
 }
 
-/* Botón para cerrar el menú */
 .sidebar .closebtn {
     position: absolute;
     top: 0;
@@ -75,11 +108,11 @@ button:hover {
 }
 .book-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Ajusta el número de columnas automáticamente */
-    gap: 20px; /* Espaciado entre las tarjetas */
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+    gap: 20px; 
     padding: 20px;
     padding-top: 56px;
-    width: 100%; /* Asegura que ocupe todo el ancho */
+    width: 100%; 
     box-sizing: border-box;
 }
 
@@ -96,7 +129,7 @@ button:hover {
 .book-cover {
     width: 100%;
     height: auto;
-    max-width: 150px; /* Tamaño máximo de ancho */
+    max-width: 150px;
     max-height: 200px;
     border-radius: 5px;
     margin-bottom: 10px;
@@ -270,11 +303,7 @@ button:hover {
 .like-heart:hover .heart {
     color: #ffb3b3;
 }
-.tab-container .active-tab {
-    background-color: #0d6efd;
-    color: #fff;
-    border-color: #0d6efd;
-}
+
 .book-detail-container {
     justify-content: center;
     align-items: center;
