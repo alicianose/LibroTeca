@@ -3,7 +3,7 @@
 {% block title %}Añadir Reseña - LibroTeca{% endblock %}
 
 {% block content %}
-<h2>Añadir Reseña</h2>
+<h2>Añadir Reseña: {{book_title}}</h2>
 <form method="POST" action="/addreview?book_id={{ book_id }}">
     <div class="mb-3">
     <label class="form-label">Puntuación</label>

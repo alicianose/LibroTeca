@@ -1,7 +1,12 @@
 import os
+from tokenize import Comment
 from flask import Flask, render_template
 import sirope
 from flask_login import LoginManager, current_user
+from models.book import Book
+from models.likereview import LikeReview
+from models.review import Review
+from models.userbook import UserBook
 from routes.auth_routes import auth_bp  # Importar el Blueprint
 from models.user import User  # Importar la clase User
 from werkzeug.utils import secure_filename
@@ -37,6 +42,15 @@ def inject_user():
 @app.route("/")
 def index():
     return render_template("index.html")
+@app.route("/reset_db")
+def reset_db():
+    models = [User, Book, Review, Comment, LikeReview, UserBook]
+
+    for model in models:
+        for oid in srp.load_all_keys(model):
+            srp.delete(oid)
+
+    return "Se ha eliminado todo"
 
 if __name__ == "__main__":
     app.run(debug=True)

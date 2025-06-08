@@ -19,12 +19,12 @@
         <p>{{ review.coment }}</p>
     </div>
     <div class="review-footer">
-        <span class="like-heart">
-            <span class="heart {% if review.id in user_likes %}liked{% endif %}">&#10084;</span>
-        </span>
-        <span id="like-count-{{ review.id }}">{{ likes[review.id] if review.id in likes else 0 }}</span>
-        <span class="review-date" style="margin-left:auto;">{{ review.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</span>
-    </div>
+    <span class="like-heart">
+        <span class="heart {% if review.id in user_likes %}liked{% endif %}">&#10084;</span>
+    </span>
+    <span class="likes-count">{{ likes_count }}</span>
+    <span class="review-date" style="margin-left:auto;">{{ review.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</span>
+</div>
     <div class="review-comments">
         <h5>Todos los comentarios:</h5>
         <ul>

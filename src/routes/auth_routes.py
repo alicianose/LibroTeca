@@ -47,7 +47,16 @@ def register():
         password = request.form.get("password")
         hashed_password = generate_password_hash(password)
 
-        
+        # Comprobar si ya existe un usuario con ese username o email
+        user_username = srp.find_first(User, lambda u: u.username == username)
+        user_email = srp.find_first(User, lambda u: u.email == email)
+        if user_username:
+            flash("El nombre de usuario ya está en uso.", "danger")
+            return redirect(url_for("auth.register"))
+        if user_email:
+            flash("El correo electrónico ya está en uso.", "danger")
+            return redirect(url_for("auth.register"))
+
         user = User(str(uuid.uuid4()), name, username, email, hashed_password)
         srp.save(user)
         flash("Registro exitoso. Ahora puedes iniciar sesión.", "success")
@@ -106,8 +115,16 @@ def review_detail(review_id):
     users = {user.id: user.username for user in srp.load_all(User)}
     books = {book.id: book.title for book in srp.load_all(Book)}
     all_comments = [c for c in srp.load_all(Coment) if c.review_id == review_id]
-    return render_template("review_detail.html", review=review, users=users, books=books, comments=all_comments)
-
+    # Calcular el número de likes para esta reseña
+    likes_count = sum(1 for l in srp.load_all(LikeReview) if l.review_id == review_id)
+    return render_template(
+        "review_detail.html",
+        review=review,
+        users=users,
+        books=books,
+        comments=all_comments,
+        likes_count=likes_count
+    )
 @auth_bp.route("/addbook", methods=["GET", "POST"])
 @login_required
 def add_book():
@@ -209,7 +226,10 @@ def add_review():
         flash("Reseña añadida exitosamente.", "success")
         return redirect(url_for("auth.books"))
 
-    return render_template("add_review.html", book_id=book_id)
+    # Buscar el libro y pasar el título a la plantilla
+    book = srp.find_first(Book, lambda b: b.id == book_id)
+    book_title = book.title if book else "Libro desconocido"
+    return render_template("add_review.html", book_id=book_id, book_title=book_title)
 @auth_bp.route("/add_comment/<review_id>", methods=["POST"])
 @login_required
 def add_comment(review_id):
